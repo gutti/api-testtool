@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <title>API TEST TOOL</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" />
+</head>
+<body>
+    <div class="container">
+    <h1>APIテスト</h1>
+
+    <hr>
+    <label for="url">URL:</label>
+    <input type="text" name="url" id="url" class="form-control" value="http://localhost:3000/api/v1/" />
+    <label class="radio-inline"><input type="radio" name="method" value="GET" checked />GET</label>
+    <label class="radio-inline"><input type="radio" name="method" value="POST" />POST</label>
+    <label class="radio-inline"><input type="radio" name="method" value="PUT"/>PUT</label>
+    <label class="radio-inline"><input type="radio" name="method" value="DELETE" />DELETE</label><br>
+    <label for="data">data:</label>
+    <textarea id="data" name="data" class="form-control" rows="15"></textarea>
+    <button type="button" id="submit" class="btn btn-primary">submit</button>
+
+    <hr>
+    <pre id="response_header"></pre>
+    <pre id="result"></pre>
+    </div>
+</body>
+</html>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript">
+$('body').on('click', '#submit', function() {
+    var url = $('#url').val();
+    var method = $('input[name=method]:checked').val();
+    var data = $('#data').val();
+
+    $.ajax({
+        url: url,
+        data: data,
+        dataType: 'text',
+        type: method,
+        success: function (res, textStatus, xhr) {
+            $('#response_header').text(xhr.getAllResponseHeaders() + xhr.status + xhr.statusText);
+            console.log(xhr.getAllResponseHeaders());
+            console.log(res);
+            try {
+                $('#result').text(res);
+                console.log(JSON.parse(res));
+            } catch ($e) {
+                $('#result').text(res.toString());
+                console.log($.parseXML(res));
+            }
+        },
+        error: function (xhr) {
+            $('#response_header').text(xhr.getAllResponseHeaders() + xhr.status + xhr.statusText);
+            console.log(xhr.getAllResponseHeaders());
+            console.log(xhr.responseText);
+            try {
+                $('#result').text(xhr.responseText);
+                console.log(JSON.parse(xhr.responseText));
+            } catch ($e) {
+                $('#result').text(xhr.responseText.toString());
+                console.log($.parseXML(xhr.responseText));
+            }
+        }
+    });
+});
+</script>
